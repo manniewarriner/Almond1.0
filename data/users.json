@@ -1,0 +1,5 @@
+{
+  "users": [
+    {"user_id": "local", "permissions": ["documents:read"]}
+  ]
+}

@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/audit.db
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+Almond1.0/
+runtime/downloads/
+runtime/models/*.gguf
+runtime/llama.cpp/*.dll
+runtime/llama.cpp/*.exe

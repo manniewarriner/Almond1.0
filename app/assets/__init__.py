@@ -1,0 +1,1 @@
+"""Packaged Almond brand assets."""
