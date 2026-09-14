@@ -52,7 +52,8 @@ class LocalModelServer:
             raise ProviderError(f"The local model file is missing: {self.model_path.name}")
 
         creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
-        threads = max(2, min(4, os.cpu_count() or 2))
+        threads = max(2, os.cpu_count() or 2)
+        gpu_layers = os.environ.get("ALMOND_GPU_LAYERS", "0")
         self._process = subprocess.Popen(
             [
                 str(self.server_exe),
@@ -66,6 +67,9 @@ class LocalModelServer:
                 "4096",
                 "--threads",
                 str(threads),
+                "--n-gpu-layers",
+                gpu_layers,
+                "--mlock",
                 "--jinja",
             ],
             cwd=self.server_exe.parent,
