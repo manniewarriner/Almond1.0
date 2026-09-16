@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
 
 import typer
 from rich.console import Console
@@ -14,12 +15,15 @@ from app.documents.retrieval import format_citation, search_documents
 from app.errors import (
     CalculationError,
     ConfigError,
+    DocumentError,
+    PdfGenerationError,
     PermissionDeniedError,
     ProviderError,
     RetrievalError,
 )
 from app.health import run_health_check
 from app.models import CheckStatus
+from app.pdf import create_branded_pdf
 from app.providers.factory import get_provider
 from app.security.permissions import resolve_requester
 from app.tools.calculator import absolute_change, percentage_return, to_decimal
@@ -35,7 +39,11 @@ app = typer.Typer(
 calc_app = typer.Typer(
     add_completion=False, no_args_is_help=True, help="Deterministic financial calculations."
 )
+pdf_app = typer.Typer(
+    add_completion=False, no_args_is_help=True, help="Branded Almond Financial PDF generation."
+)
 app.add_typer(calc_app, name="calc")
+app.add_typer(pdf_app, name="pdf")
 console = Console()
 
 
@@ -225,17 +233,28 @@ def ask(
         raise typer.Exit(code=2) from exc
 
     requester = resolve_requester(config.users_file, user)
+    local_server = getattr(provider, "server", None)
 
     try:
-        result = run_ask_workflow(config.documents_dir, question, requester, provider, top_k=top_k)
-    except PermissionDeniedError as exc:
-        _audit(config, user, "ask", question, outcome="denied", error_category="permission_denied")
-        console.print(f"[red]Ask error:[/red] {exc}")
-        raise typer.Exit(code=1) from exc
-    except RetrievalError as exc:
-        _audit(config, user, "ask", question, outcome="error", error_category="invalid_request")
-        console.print(f"[red]Ask error:[/red] {exc}")
-        raise typer.Exit(code=1) from exc
+        try:
+            result = run_ask_workflow(
+                config.documents_dir, question, requester, provider, top_k=top_k
+            )
+        except PermissionDeniedError as exc:
+            _audit(
+                config, user, "ask", question, outcome="denied", error_category="permission_denied"
+            )
+            console.print(f"[red]Ask error:[/red] {exc}")
+            raise typer.Exit(code=1) from exc
+        except RetrievalError as exc:
+            _audit(config, user, "ask", question, outcome="error", error_category="invalid_request")
+            console.print(f"[red]Ask error:[/red] {exc}")
+            raise typer.Exit(code=1) from exc
+    finally:
+        # A one-shot CLI call must not leave the bundled model server running
+        # in the background after the process exits.
+        if local_server is not None:
+            local_server.stop()
 
     citations = result.citations
     _audit(
@@ -257,6 +276,71 @@ def ask(
         console.print(
             "\n[yellow]No approved-document evidence was found for this question.[/yellow]"
         )
+
+
+@pdf_app.command("create")
+def pdf_create(
+    source: str = typer.Argument(..., help="Path to the local document to convert"),
+    title: str = typer.Option(None, "--title", help="Override the document title in the PDF"),
+    user: str = USER_OPTION,
+) -> None:
+    """Convert a local document into an Almond Financial branded PDF.
+
+    Access is enforced against data/users.json (fail-closed: an unknown
+    --user gets zero permissions). Every call is recorded in the audit log.
+    Supported source types: .txt .md .docx .pdf. Output is written under
+    the configured outputs directory and never overwrites an existing file.
+    """
+    try:
+        config = load_config()
+    except ConfigError as exc:
+        console.print(f"[red]Configuration error:[/red] {exc}")
+        raise typer.Exit(code=2) from exc
+
+    requester = resolve_requester(config.users_file, user)
+    if "documents:read" not in requester.permissions:
+        _audit(
+            config,
+            user,
+            "pdf.create",
+            f"source={Path(source).name}",
+            outcome="denied",
+            error_category="permission_denied",
+        )
+        console.print("[red]PDF error:[/red] Missing permission: documents:read")
+        raise typer.Exit(code=1)
+
+    try:
+        result = create_branded_pdf(Path(source), config.outputs_dir, title)
+    except (DocumentError, PdfGenerationError) as exc:
+        _audit(
+            config,
+            user,
+            "pdf.create",
+            f"source={Path(source).name}",
+            outcome="error",
+            error_category="invalid_request",
+        )
+        console.print("[red]PDF generation failed.[/red]")
+        console.print(f"\nReason:\n{exc}\n\nSupported:\n.txt .md .docx .pdf")
+        raise typer.Exit(code=1) from exc
+
+    _audit(
+        config,
+        user,
+        "pdf.create",
+        f"source={Path(source).name} pages={result.pages} output={Path(result.output_path).name}",
+        outcome="ok",
+        tools_invoked=["document_to_pdf"],
+    )
+
+    console.print("[bold]Almond PDF[/bold]\n")
+    console.print("[green]✓[/green] Document loaded")
+    console.print(f"[green]✓[/green] {result.word_count:,} words extracted")
+    console.print("[green]✓[/green] Almond template applied")
+    console.print("[green]✓[/green] PDF generated")
+    console.print("[green]✓[/green] Output verified")
+    console.print(f"\nOutput:\n{result.output_path}")
 
 
 @app.command()

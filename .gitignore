@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 .env
 data/audit.db
+data/runtime/
+outputs/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/

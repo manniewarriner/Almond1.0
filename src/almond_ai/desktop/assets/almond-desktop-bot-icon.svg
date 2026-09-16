@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="46%" r="55%">
+      <stop offset="0%" stop-color="#F15A24" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#F15A24" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#F15A24" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="markFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#F4C88C"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#10131A"/>
+  <circle cx="128" cy="128" r="98" fill="url(#glow)"/>
+
+  <!-- Assistant/bot glyph: rounded head, antenna, two eyes and a mouth,
+       punched through in the background colour, using the same orange
+       gradient treatment as the almond mark for a distinct but on-brand icon. -->
+  <line x1="128" y1="76" x2="128" y2="52" stroke="url(#markFill)" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="128" cy="44" r="11" fill="url(#markFill)"/>
+  <rect x="66" y="76" width="124" height="102" rx="27" fill="url(#markFill)"/>
+  <circle cx="103" cy="122" r="12" fill="#10131A"/>
+  <circle cx="153" cy="122" r="12" fill="#10131A"/>
+  <rect x="106" y="147" width="44" height="11" rx="5.5" fill="#10131A"/>
+  <rect x="40" y="112" width="16" height="36" rx="8" fill="url(#markFill)"/>
+  <rect x="200" y="112" width="16" height="36" rx="8" fill="url(#markFill)"/>
+</svg>

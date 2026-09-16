@@ -30,10 +30,11 @@ class AppConfig(BaseSettings):
     audit_db_path: Path = Path("data/audit.db")
     documents_dir: Path = Path("data/sample_documents")
     users_file: Path = Path("data/users.json")
+    outputs_dir: Path = Path("outputs")
     provider_name: str = "fake"
     provider_api_key: str | None = None
     provider_base_url: str | None = None
-    local_chat_model: str = "Qwen3.5-2B-Q4_K_M.gguf"
+    local_chat_model: str = "MiniCPM5-2B-Q4_K_M.gguf"
 
     @field_validator("provider_name")
     @classmethod
@@ -47,8 +48,12 @@ class AppConfig(BaseSettings):
     @field_validator("local_chat_model")
     @classmethod
     def validate_local_chat_model(cls, value: str) -> str:
-        if not re.fullmatch(r"[A-Za-z0-9._:/-]{1,100}", value):
-            raise ValueError("local_chat_model contains unsupported characters")
+        if not re.fullmatch(r"[A-Za-z0-9._-]{1,100}", value):
+            raise ValueError(
+                "local_chat_model must be a plain filename (letters, digits, '.', '_', '-' only)"
+            )
+        if ".." in value:
+            raise ValueError("local_chat_model must not contain '..'")
         return value
 
 

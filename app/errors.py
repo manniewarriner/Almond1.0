@@ -21,6 +21,10 @@ class DocumentError(FirmAIError):
     """Raised when a document cannot be safely ingested."""
 
 
+class PdfGenerationError(FirmAIError):
+    """Raised when a branded PDF cannot be safely generated or verified."""
+
+
 class RetrievalError(FirmAIError):
     """Raised when retrieval cannot be safely performed."""
 

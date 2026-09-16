@@ -1,0 +1,422 @@
+$background: #101416;
+$almond-panel: #15191C;
+$panel-alt: #1B2023;
+$border: #343A3F;
+$text: #F2F2EE;
+$secondary: #9CA3A8;
+$orange: #F15A24;
+$green: #6F9B74;
+$amber: #B58A52;
+$red: #A96363;
+
+Screen {
+    background: $background;
+    color: $text;
+}
+
+* {
+    scrollbar-color: $orange;
+    scrollbar-color-hover: $orange;
+    scrollbar-color-active: $orange;
+    scrollbar-background: $almond-panel;
+    scrollbar-background-hover: $panel-alt;
+    scrollbar-background-active: $panel-alt;
+}
+
+.secondary { color: $secondary; }
+.command, .accent { color: $orange; }
+.status-ok { color: $green; }
+.status-muted { color: $secondary; }
+.agent-name { color: $text; text-style: bold; }
+
+#workspace {
+    height: 1fr;
+    layout: horizontal;
+    background: $background;
+}
+
+#navigation {
+    width: 24;
+    min-width: 22;
+    max-width: 30;
+    height: 1fr;
+    background: $almond-panel;
+    border-right: solid $border;
+    padding: 1 1;
+}
+
+#sidebar-brand {
+    height: 2;
+    padding: 0 1 1 1;
+    color: $text;
+    border-bottom: solid $border;
+    margin-bottom: 1;
+}
+
+#sidebar-bots-label {
+    height: 2;
+    margin-top: 1;
+    padding-left: 1;
+    color: $secondary;
+}
+
+#bot-list {
+    height: auto;
+    max-height: 16;
+}
+
+.nav-item {
+    height: 2;
+    padding: 0 1;
+    color: $secondary;
+    border-left: tall transparent;
+}
+
+.nav-item:hover {
+    color: $text;
+    background: $panel-alt;
+}
+
+.nav-selected {
+    color: $orange;
+    background: #241A16;
+    border-left: tall $orange;
+    text-style: bold;
+}
+
+.new-bot-item {
+    color: $orange;
+    margin-bottom: 1;
+}
+
+.bot-nav-item {
+    height: 1;
+    padding: 0 1;
+    margin-bottom: 0;
+}
+
+.sidebar-settings-item {
+    dock: bottom;
+    margin-top: 1;
+    border-top: solid $border;
+    padding-top: 1;
+}
+
+#center-shell {
+    width: 1fr;
+    height: 1fr;
+    margin: 0 1;
+    padding: 1 1 0 1;
+    background: $background;
+}
+
+#center-header {
+    height: 5;
+    padding: 0 1;
+}
+
+#welcome-heading {
+    height: 2;
+    text-style: bold;
+}
+
+#workflow-heading {
+    color: $secondary;
+    text-align: right;
+}
+
+#view-stack { height: 1fr; }
+.view { display: none; height: 1fr; padding: 0 1; }
+.view-active { display: block; }
+
+#view-chat {
+    display: none;
+    height: 1fr;
+    padding: 0 1;
+}
+
+#view-chat.view-active { display: block; }
+
+/* Calm, borderless empty state -- centered text plus at most one
+   quick-action button, over plain screen background rather than a
+   framed panel. */
+#welcome-panel {
+    height: 1fr;
+    padding: 2 4;
+    background: $background;
+    align: center middle;
+}
+
+#welcome-text {
+    width: 100%;
+    text-align: center;
+}
+
+.quick-action {
+    display: none;
+    width: 40;
+    margin-top: 1;
+}
+
+#console {
+    height: 1fr;
+    min-height: 10;
+    padding: 1 2;
+    background: $background;
+    scrollbar-color: $orange;
+    scrollbar-color-hover: $orange;
+    scrollbar-color-active: $orange;
+    scrollbar-background: $almond-panel;
+}
+
+#input-area {
+    height: 5;
+    margin: 1 1 0 1;
+    padding: 0 1;
+    background: $almond-panel;
+    border: solid $border;
+}
+
+#input-label { height: 1; color: $secondary; }
+#input-hint { height: 1; text-align: right; }
+
+#stream-indicator {
+    height: 1;
+    display: none;
+    color: $secondary;
+}
+
+#composer {
+    height: 3;
+    border: none;
+    background: $panel-alt;
+    color: $text;
+    scrollbar-color: $orange;
+    scrollbar-background: $panel-alt;
+}
+
+#composer:focus { border: none; background: #1E2326; }
+
+#suggestions {
+    display: none;
+    width: 100%;
+    max-height: 12;
+    dock: top;
+    layer: overlay;
+    offset-y: -12;
+    padding: 1 2;
+    color: $orange;
+    background: $panel-alt;
+    border: solid $border;
+}
+
+.card {
+    height: auto;
+    min-height: 5;
+    margin-bottom: 1;
+    padding: 1 2;
+    background: $almond-panel;
+    border: solid $border;
+}
+
+.section-title {
+    height: 2;
+    color: $text;
+    text-style: bold;
+}
+
+.view-title {
+    height: 2;
+    color: $text;
+    text-style: bold;
+}
+
+.view-subtitle {
+    height: 3;
+    color: $secondary;
+}
+
+.card-grid, .metric-grid {
+    height: auto;
+    layout: grid;
+    grid-size: 2;
+    grid-columns: 1fr 1fr;
+    grid-gutter: 1 2;
+}
+
+.agent-card { min-height: 7; }
+.metric-card { min-height: 6; }
+.metric-value { color: $text; text-style: bold; }
+.integration-card { min-height: 5; }
+.evaluation-card { min-height: 7; }
+.warning-card { border: solid $amber; }
+
+#tools-table {
+    height: 1fr;
+    margin-top: 1;
+    background: $almond-panel;
+    border: solid $border;
+    scrollbar-color: $orange;
+    scrollbar-background: $almond-panel;
+}
+
+#tools-table > .datatable--header {
+    background: $panel-alt;
+    color: $text;
+    text-style: bold;
+}
+
+#tools-table > .datatable--cursor {
+    background: #241A16;
+    color: $orange;
+}
+
+#tools-table > .datatable--hover { background: $panel-alt; }
+
+#logs-console {
+    height: 1fr;
+    padding: 1 2;
+    background: #0C0F10;
+    border: solid $border;
+    scrollbar-color: $orange;
+    scrollbar-background: $almond-panel;
+}
+
+#secure-footer {
+    height: 2;
+    padding: 0 2;
+    color: $secondary;
+    background: $almond-panel;
+    border-top: solid $border;
+}
+
+#help-dialog {
+    width: 70;
+    height: 30;
+    align: center middle;
+    padding: 1 2;
+    background: $almond-panel;
+    border: solid $orange;
+}
+
+#help-title { height: 3; color: $text; text-style: bold; }
+#help-commands { height: 1fr; color: $secondary; }
+#help-close { height: 2; color: $secondary; text-align: right; }
+
+#settings-developer-label {
+    height: 2;
+    margin-top: 1;
+    color: $secondary;
+}
+
+.developer-nav-item {
+    border: solid $border;
+    margin-bottom: 1;
+}
+
+#new-bot-dialog {
+    width: 72;
+    height: auto;
+    max-height: 90%;
+    align: center middle;
+    padding: 1 2;
+    background: $almond-panel;
+    border: solid $orange;
+}
+
+#new-bot-title {
+    height: 2;
+    color: $text;
+    text-style: bold;
+}
+
+.new-bot-label {
+    height: 1;
+    margin-top: 1;
+    color: $secondary;
+}
+
+#bot-instructions {
+    height: 5;
+    border: solid $border;
+}
+
+#new-bot-tools {
+    height: 1;
+    margin-top: 1;
+}
+
+#new-bot-tools > Checkbox {
+    margin-right: 2;
+}
+
+#new-bot-selects {
+    height: 3;
+    margin-top: 1;
+}
+
+#new-bot-selects > Select {
+    width: 1fr;
+    margin-right: 1;
+}
+
+#new-bot-error {
+    height: 1;
+    margin-top: 1;
+}
+
+#new-bot-actions {
+    height: 3;
+    margin-top: 1;
+    align: right middle;
+}
+
+#new-bot-actions > Button {
+    margin-left: 1;
+}
+
+LoadingScreen {
+    align: center middle;
+    background: $background;
+}
+
+#loading-panel {
+    width: 60;
+    height: auto;
+    padding: 3 4;
+    align: center middle;
+    background: $almond-panel;
+    border: solid $orange;
+}
+
+#loading-status {
+    width: 100%;
+    text-align: center;
+    color: $secondary;
+    margin: 1 0;
+}
+
+#loading-bar {
+    width: 100%;
+    margin-top: 1;
+    align: center middle;
+}
+
+#loading-bar > #bar {
+    width: 1fr;
+}
+
+#loading-bar > .bar--indeterminate {
+    color: $orange;
+    background: $almond-panel;
+}
+
+#loading-bar > .bar--bar {
+    color: $orange;
+    background: $almond-panel;
+}
+
+#loading-bar > .bar--complete {
+    color: $orange;
+    background: $almond-panel;
+}

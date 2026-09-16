@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typer.testing import CliRunner
 
+import app.cli as cli_module
 from app.cli import app
+from app.providers.base import ProviderMessage, ProviderResponse
 
 runner = CliRunner()
 
@@ -53,3 +55,31 @@ def test_ask_command_unknown_user_denied(tmp_path, monkeypatch):
     assert result.exit_code == 1
     assert "Ask error" in result.stdout
     assert "policy.md" not in result.stdout
+
+
+def test_ask_command_stops_local_model_server_after_use(tmp_path, monkeypatch):
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    monkeypatch.setenv("FIRM_AI_DOCUMENTS_DIR", str(docs_dir))
+
+    stopped = []
+
+    class StubServer:
+        def stop(self) -> None:
+            stopped.append(True)
+
+    class StubProvider:
+        name = "local:llama.cpp"
+
+        def __init__(self) -> None:
+            self.server = StubServer()
+
+        def complete(self, messages: list[ProviderMessage]) -> ProviderResponse:
+            return ProviderResponse(text="stub answer", provider_name=self.name)
+
+    monkeypatch.setattr(cli_module, "get_provider", lambda config: StubProvider())
+
+    result = runner.invoke(app, ["ask", "unrelated question"])
+
+    assert result.exit_code == 0
+    assert stopped == [True]
