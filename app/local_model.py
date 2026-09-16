@@ -96,9 +96,7 @@ class LocalModelServer:
         creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         cpu_count = os.cpu_count() or 2
         threads = max(2, cpu_count)
-        # Captured to a file (not subprocess.PIPE) so a long-lived, healthy
-        # server can never deadlock on a full, unread pipe buffer -- only
-        # read back if start() below sees the process exit early.
+        gpu_layers = os.environ.get("ALMOND_GPU_LAYERS", "0")
         with self._stderr_log.open("wb") as stderr_file:
             return subprocess.Popen(
                 [
@@ -115,8 +113,11 @@ class LocalModelServer:
                     str(threads),
                     "--threads-batch",
                     str(threads),
+                    "--n-gpu-layers",
+                    gpu_layers,
                     "--flash-attn",
                     "on",
+                    "--mlock",
                     "--jinja",
                 ],
                 cwd=self.server_exe.parent,
@@ -125,28 +126,6 @@ class LocalModelServer:
                 stderr=stderr_file,
                 creationflags=creation_flags,
             )
-
-    def _startup_failure_detail(self) -> str:
-        """The last logged line from a server process that exited during
-        startup -- llama.cpp reports the real reason there (a corrupted or
-        incomplete model file, an OOM, a bad flag), which DEVNULL used to
-        discard entirely, leaving only a generic "failed to start" with no
-        way to diagnose it short of re-running the exe by hand outside the
-        app.
-        """
-        try:
-            text = self._stderr_log.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            return ""
-        lines = [line.strip() for line in text.splitlines() if line.strip()]
-        return lines[-1][-300:] if lines else ""
-
-    def _startup_failure_message(self) -> str:
-        detail = self._startup_failure_detail()
-        return (
-            f"The local model server failed to start: {detail}"
-            if detail
-            else "The local model server failed to start."
         )
 
     def start(self, timeout_seconds: int = 120) -> None:
