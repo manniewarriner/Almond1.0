@@ -8,11 +8,11 @@ those stay terminal-only).
 from __future__ import annotations
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from almond_ai.bots.models import BotDefinition
 from almond_ai.desktop import theme
-from almond_ai.desktop.icons import bot_icon, brand_mark_pixmap, nut_pixmap
+from almond_ai.desktop.icons import bot_icon, brand_mark_pixmap, gear_pixmap, nut_pixmap
 
 SETTINGS_ID = "__settings__"
 
@@ -59,6 +59,7 @@ class Sidebar(QWidget):
             outer.addWidget(self._build_bot_row(bot))
 
         outer.addStretch(1)
+        outer.addWidget(self._build_footer_divider())
         outer.addWidget(self._build_settings_row())
 
     def _build_brand_block(self) -> QWidget:
@@ -158,12 +159,25 @@ class Sidebar(QWidget):
         self._rows[row.nav_id] = row
         return row
 
+    def _build_footer_divider(self) -> QWidget:
+        divider = QFrame()
+        divider.setObjectName("sidebarDivider")
+        divider.setFrameShape(QFrame.Shape.HLine)
+        divider.setFixedHeight(1)
+        return divider
+
     def _build_settings_row(self) -> QWidget:
         row = _NavRow(SETTINGS_ID)
         row.setMinimumHeight(44)
         layout = QHBoxLayout(row)
         layout.setContentsMargins(6, 4, 6, 4)
         layout.setSpacing(10)
+
+        icon_label = QLabel()
+        icon_label.setPixmap(gear_pixmap(theme.TEXT_SECONDARY, 18))
+        icon_label.setFixedSize(18, 18)
+        layout.addWidget(icon_label)
+
         label = QLabel("Settings")
         label.setObjectName("sidebarFooterLabel")
         layout.addWidget(label)

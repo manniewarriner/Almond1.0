@@ -127,6 +127,12 @@ def stylesheet() -> str:
         font-size: {TYPE_BODY}px;
     }}
 
+    QFrame#sidebarDivider {{
+        background: {BORDER};
+        border: none;
+        margin: 10px 4px;
+    }}
+
     QLabel#sidebarFooterLabel {{
         color: {TEXT_SECONDARY};
         font-size: {TYPE_BODY}px;

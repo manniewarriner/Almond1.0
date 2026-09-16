@@ -122,3 +122,31 @@ def _brand_mark_pixmap(color: str, size: int) -> QPixmap:
 def brand_mark_pixmap(color: str, size: int = 96) -> QPixmap:
     """The Almond Financial mark alone (no background), for the welcome hero."""
     return _brand_mark_pixmap(color, size)
+
+
+# Simple flat cog/gear glyph, drawn as a single filled path so it can be
+# recoloured and resized the same way as the nut icons above.
+_GEAR_PATH = (
+    "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c"
+    "1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 "
+    "2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 "
+    "1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573"
+    "-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756"
+    "-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 "
+    "2.37-2.37c1 .608 2.296.07 2.572-1.065ZM12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+)
+
+
+@cache
+def _gear_pixmap(color: str, size: int) -> QPixmap:
+    svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">'
+        f'<path fill-rule="evenodd" clip-rule="evenodd" fill="{color}" d="{_GEAR_PATH}"/>'
+        "</svg>"
+    )
+    return _render_svg(svg, size)
+
+
+def gear_pixmap(color: str, size: int = 20) -> QPixmap:
+    """Flat cog/gear glyph, e.g. for the sidebar's Settings row."""
+    return _gear_pixmap(color, size)
