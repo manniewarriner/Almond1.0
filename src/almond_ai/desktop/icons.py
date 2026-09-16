@@ -122,12 +122,15 @@ def _brand_mark_pixmap(color: str, size: int, line_color: str | None = None) -> 
     lines = "".join(f'<path d="{d}"/>' for d in _MARK_LINE_PATHS)
     line_fill = line_color or color
     svg = (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">'
-        '<g transform="translate(16,10) scale(1.14)">'
+        # The inner transform gives the combined paths bounds of approximately
+        # x=56.0..144.9 and y=41.7..151.0.  This square viewBox centres those
+        # bounds with balanced opposing margins, without a second transform
+        # that can move scaled geometry beyond its viewport.
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="36 32 129 129">'
         '<g transform="translate(0,192) scale(0.1,-0.1)">'
         f'<g fill="{color}">{body}</g>'
         f'<g fill="{line_fill}">{lines}</g>'
-        "</g></g></svg>"
+        "</g></svg>"
     )
     return _render_svg(svg, size)
 
