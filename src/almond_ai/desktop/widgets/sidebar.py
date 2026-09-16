@@ -69,7 +69,7 @@ class Sidebar(QWidget):
         layout.setSpacing(14)
 
         mark = QLabel()
-        mark.setPixmap(brand_mark_pixmap(theme.ACCENT, 46))
+        mark.setPixmap(brand_mark_pixmap(theme.ACCENT, 46, line_color="#FFFFFF"))
         mark.setFixedSize(46, 46)
         layout.addWidget(mark)
 

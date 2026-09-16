@@ -90,9 +90,17 @@ def bot_icon(bot_id: str, color: str, size: int = 32) -> QIcon | None:
 # without shipping another asset. The inner group reproduces that source
 # file's own translate/scale unchanged so its raw path data is pasted
 # verbatim, avoiding hand-transformed coordinates.
-_MARK_PATHS = (
+_MARK_BODY_PATHS = (
     "M788 1494 c-60 -31 -156 -217 -199 -381 -23 -91 -35 -249 -24 -319 l7 -49 17 70 "
     "c47 192 131 344 269 487 l75 77 -18 28 c-22 35 -65 82 -85 93 -9 5 -26 2 -42 -6z",
+    "M955 1107 c-164 -113 -314 -318 -330 -452 -27 -213 222 -331 362 -171 88 99 117 363 "
+    "65 585 -9 41 -22 76 -27 77 -6 2 -37 -16 -70 -39z",
+)
+
+# The thin cross-strokes over the leaf body -- rendered in a second colour
+# (white, by default) so they read as distinct highlight lines rather than
+# blending into the solid body fill.
+_MARK_LINE_PATHS = (
     "M1092 1430 c-24 -11 -56 -29 -72 -40 l-29 -20 32 -75 c17 -42 34 -74 37 -73 "
     "3 2 38 17 78 33 l74 30 -6 43 c-8 59 -42 122 -66 122 -3 0 -24 -9 -48 -20z",
     "M880 1264 c-91 -95 -162 -207 -207 -323 -37 -99 -42 -131 -12 -81 62 102 213 252 "
@@ -102,26 +110,36 @@ _MARK_PATHS = (
     "-34 -1 -71 -4 -82 -6z",
     "M1146 1215 c-32 -13 -63 -28 -68 -33 -5 -5 -2 -33 6 -67 28 -103 39 -226 33 -345 "
     "-6 -110 -6 -114 9 -80 54 119 91 276 94 390 3 111 0 160 -7 160 -5 0 -35 -11 -67 -25z",
-    "M955 1107 c-164 -113 -314 -318 -330 -452 -27 -213 222 -331 362 -171 88 99 117 363 "
-    "65 585 -9 41 -22 76 -27 77 -6 2 -37 -16 -70 -39z",
 )
+
+# Kept for anything still importing the flat, single-colour path list.
+_MARK_PATHS = _MARK_BODY_PATHS + _MARK_LINE_PATHS
 
 
 @cache
-def _brand_mark_pixmap(color: str, size: int) -> QPixmap:
-    paths = "".join(f'<path d="{d}"/>' for d in _MARK_PATHS)
+def _brand_mark_pixmap(color: str, size: int, line_color: str | None = None) -> QPixmap:
+    body = "".join(f'<path d="{d}"/>' for d in _MARK_BODY_PATHS)
+    lines = "".join(f'<path d="{d}"/>' for d in _MARK_LINE_PATHS)
+    line_fill = line_color or color
     svg = (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">'
-        f'<g transform="translate(16,10) scale(1.14)" fill="{color}">'
+        '<g transform="translate(16,10) scale(1.14)">'
         '<g transform="translate(0,192) scale(0.1,-0.1)">'
-        f"{paths}</g></g></svg>"
+        f'<g fill="{color}">{body}</g>'
+        f'<g fill="{line_fill}">{lines}</g>'
+        "</g></g></svg>"
     )
     return _render_svg(svg, size)
 
 
-def brand_mark_pixmap(color: str, size: int = 96) -> QPixmap:
-    """The Almond Financial mark alone (no background), for the welcome hero."""
-    return _brand_mark_pixmap(color, size)
+def brand_mark_pixmap(color: str, size: int = 96, line_color: str | None = None) -> QPixmap:
+    """The Almond Financial mark alone (no background), for the welcome hero.
+
+    `line_color` recolours the thin cross-strokes separately from the solid
+    leaf body (`color`) -- pass white to make them stand out, or omit it to
+    keep the mark a single flat colour.
+    """
+    return _brand_mark_pixmap(color, size, line_color)
 
 
 # Simple flat cog/gear glyph, drawn as a single filled path so it can be

@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
 
         mark_label = QLabel()
         mark_label.setObjectName("welcomeBrandMark")
-        mark_label.setPixmap(brand_mark_pixmap(theme.ACCENT, 128))
+        mark_label.setPixmap(brand_mark_pixmap(theme.ACCENT, 128, line_color="#FFFFFF"))
         mark_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(mark_label)
         layout.addSpacing(4)
